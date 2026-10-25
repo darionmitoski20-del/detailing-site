@@ -74,6 +74,10 @@ export type SiteConfig = {
   faq: { q: string; a: string }[];
 };
 
+// Unsplash image helpers (resized, compressed on their CDN)
+const U = "https://images.unsplash.com/";
+const Q = (w: number) => `?w=${w}&q=75&auto=format&fit=crop`;
+
 export const site: SiteConfig = {
   mode: "mobile",
 
@@ -108,20 +112,22 @@ export const site: SiteConfig = {
     accent: "#E11D2E",
   },
 
+  // Demo media: free stock from Pexels (video) and Unsplash (photos).
+  // Replace with the client's own photos/videos in /public before going live.
   hero: {
-    video: "",
-    poster: "",
+    video: "https://videos.pexels.com/video-files/6159290/6159290-hd_1280_720_30fps.mp4",
+    poster: `${U}photo-1761312834150-4beefff097a7${Q(1600)}`,
   },
 
   rating: { score: 4.9, count: 120 },
 
   services: [
-    { name: "Full Detail", from: 375, description: "Our most popular package. Interior and exterior, restored to showroom condition." },
-    { name: "Interior Detail", from: 245, description: "Deep vacuum, shampoo, steam, leather care and glass. Smells new again." },
-    { name: "Exterior Detail", from: 155, description: "Foam hand wash, wheels and tires, decontamination and sealant." },
-    { name: "Ceramic Coating", from: 899, description: "Long-term gloss and protection that makes every wash easier." },
-    { name: "Paint Correction", from: 450, description: "Machine polishing to remove swirls, light scratches and water spots." },
-    { name: "Odor Removal", from: 95, description: "Enzyme and ozone treatment for smoke, pets and spills." },
+    { name: "Full Detail", from: 375, description: "Our most popular package. Interior and exterior, restored to showroom condition.", image: `${U}photo-1567808291548-fc3ee04dbcf0${Q(800)}` },
+    { name: "Interior Detail", from: 245, description: "Deep vacuum, shampoo, steam, leather care and glass. Smells new again.", image: `${U}photo-1771491237209-b89bc7290588${Q(800)}` },
+    { name: "Exterior Detail", from: 155, description: "Foam hand wash, wheels and tires, decontamination and sealant.", image: `${U}photo-1694678505383-676d78ea3b96${Q(800)}` },
+    { name: "Ceramic Coating", from: 899, description: "Long-term gloss and protection that makes every wash easier.", image: `${U}photo-1554294314-80a5fb7e6bd5${Q(800)}` },
+    { name: "Paint Correction", from: 450, description: "Machine polishing to remove swirls, light scratches and water spots.", image: `${U}photo-1780558852670-3f49298ecc1f${Q(800)}` },
+    { name: "Odor Removal", from: 95, description: "Enzyme and ozone treatment for smoke, pets and spills.", image: `${U}photo-1771491237218-cbd4a707497e${Q(800)}` },
   ],
 
   calculator: {
@@ -151,9 +157,10 @@ export const site: SiteConfig = {
   },
 
   gallery: [
-    { label: "Interior", caption: "Honda Pilot · Interior detail · pet hair & stains" },
-    { label: "Exterior", caption: "BMW X5 · Exterior wash & sealant · road film, brake dust" },
-    { label: "Paint correction", caption: "Ford F-150 · 2-step paint correction · swirls, water spots" },
+    // Demo pairs from stock photos — replace with the client's real before/after shots of the same car.
+    { label: "Interior", caption: "Interior detail · stains, dust & crumbs", before: `${U}photo-1768853143263-72d7e744bbc2${Q(1400)}`, after: `${U}photo-1761040100341-6aeeda55d58c${Q(1400)}` },
+    { label: "Exterior", caption: "Exterior wash & sealant · mud, road film", before: `${U}photo-1770935883781-a2f5a52b69da${Q(1400)}`, after: `${U}photo-1567808291548-fc3ee04dbcf0${Q(1400)}` },
+    { label: "Paint correction", caption: "Paint correction & ceramic · swirls, dull clear coat", before: `${U}photo-1780558852670-3f49298ecc1f${Q(1400)}`, after: `${U}photo-1554294314-80a5fb7e6bd5${Q(1400)}` },
   ],
 
   reviews: [
