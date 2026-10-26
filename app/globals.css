@@ -190,7 +190,7 @@ button, input, select, textarea { font: inherit; }
 .ba__haze {
   position: absolute; inset: 0; pointer-events: none;
   background:
-    repeating-radial-gradient(circle at 62% 48%, rgba(255,255,255,0.06) 0 2px, transparent 2px 9px),
+    repeating-radial-gradient(circle at 62% 48%, rgba(255,255,255,0.025) 0 1px, transparent 1px 7px),
     linear-gradient(rgba(214, 205, 196, 0.22), rgba(214, 205, 196, 0.22));
   mix-blend-mode: screen;
 }
