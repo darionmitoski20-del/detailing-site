@@ -26,7 +26,8 @@ export type GallerySet = {
   label: string;
   caption: string;
   before?: string; // "/images/before-interior.jpg"
-  after?: string; // "/images/after-interior.jpg"};
+  after?: string; // "/images/after-interior.jpg"
+};
 
 export type SiteConfig = {
   mode: Mode;
@@ -158,7 +159,8 @@ export const site: SiteConfig = {
   gallery: [
     // Demo pairs from stock photos — replace with the client's real before/after shots of the same car.
     { label: "Interior", caption: "Interior detail · seat shampoo & extraction", before: `${U}photo-1770936450010-6837d6933caa${Q(1400)}`, after: `${U}photo-1770936560291-c75286720ff5${Q(1400)}` },
-    { label: "Exterior", caption: "Exterior wash & sealant · mud, road film", before: `${U}photo-1770935883781-a2f5a52b69da${Q(1400)}`, after: `${U}photo-1770936044591-979681c051cf${Q(1400)}` },  ],
+    { label: "Exterior", caption: "Exterior wash & sealant · mud, road film", before: `${U}photo-1770935883781-a2f5a52b69da${Q(1400)}`, after: `${U}photo-1770936044591-979681c051cf${Q(1400)}` },
+  ],
 
   reviews: [
     { name: "Customer Name", text: "Replace with a real Google review — what was done and how the car looked after.", service: "Full Detail", when: "2 weeks ago" },
