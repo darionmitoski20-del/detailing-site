@@ -27,6 +27,8 @@ export type GallerySet = {
   caption: string;
   before?: string; // "/images/before-interior.jpg"
   after?: string; // "/images/after-interior.jpg"
+  /** Demo only: simulate dull, oxidized paint on the "before" photo (use when before = after image). */
+  simulateDullPaint?: boolean;
 };
 
 export type SiteConfig = {
@@ -158,9 +160,9 @@ export const site: SiteConfig = {
 
   gallery: [
     // Demo pairs from stock photos — replace with the client's real before/after shots of the same car.
-    { label: "Interior", caption: "Interior detail · stains, dust & crumbs", before: `${U}photo-1768853143263-72d7e744bbc2${Q(1400)}`, after: `${U}photo-1761040100341-6aeeda55d58c${Q(1400)}` },
+    { label: "Interior", caption: "Interior detail · seat shampoo & extraction", before: `${U}photo-1770936450010-6837d6933caa${Q(1400)}`, after: `${U}photo-1770936560291-c75286720ff5${Q(1400)}` },
     { label: "Exterior", caption: "Exterior wash & sealant · mud, road film", before: `${U}photo-1770935883781-a2f5a52b69da${Q(1400)}`, after: `${U}photo-1770936044591-979681c051cf${Q(1400)}` },
-    { label: "Paint correction", caption: "Paint correction & ceramic · swirls, dull clear coat", before: `${U}photo-1780558852670-3f49298ecc1f${Q(1400)}`, after: `${U}photo-1554294314-80a5fb7e6bd5${Q(1400)}` },
+    { label: "Paint correction", caption: "Paint correction & ceramic · faded, oxidized clear coat", before: `${U}photo-1508974239320-0a029497e820${Q(1400)}`, after: `${U}photo-1508974239320-0a029497e820${Q(1400)}`, simulateDullPaint: true },
   ],
 
   reviews: [

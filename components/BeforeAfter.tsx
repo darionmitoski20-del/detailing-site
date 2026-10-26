@@ -43,7 +43,14 @@ export default function BeforeAfter() {
           {/* BEFORE (bottom layer) */}
           {set.before ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img className="ba__img" src={asset(set.before)} alt={`Before: ${set.caption}`} />
+            <>
+              <img
+                className={set.simulateDullPaint ? "ba__img ba__img--dull" : "ba__img"}
+                src={asset(set.before)}
+                alt={`Before: ${set.caption}`}
+              />
+              {set.simulateDullPaint ? <span className="ba__haze" aria-hidden="true" /> : null}
+            </>
           ) : (
             <div className="ba__placeholder" style={{ justifyContent: "flex-end", color: "#f5f5f4" }}>
               Before photo
