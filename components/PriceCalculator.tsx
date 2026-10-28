@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { site } from "@/site.config";
 import { smsHref } from "@/lib/links";
+import { CameraIcon } from "./Icons";
 
 export type EstimateSelection = { vehicle: string; service: string; total: number };
 export const ESTIMATE_EVENT = "estimate:select";
@@ -117,8 +118,9 @@ export default function PriceCalculator() {
           <button type="button" className="btn btn--accent btn--block" onClick={bookThis}>
             Book this detail
           </button>
-          <a href={smsHref} className="btn btn--ghost btn--block" style={{ fontSize: 15, minHeight: 48 }}>
-            Text us a photo for an exact quote
+          <a href={smsHref} className="btn btn--ghost btn--block btn--photo">
+            <CameraIcon size={18} />
+            <span>Text a photo for an exact quote</span>
           </a>
           <p className="summary__note">Estimate only. Price depends on size and condition of the vehicle.</p>
         </aside>
