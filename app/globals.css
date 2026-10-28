@@ -71,7 +71,7 @@ button, input, select, textarea { font: inherit; }
 .btn--ghost { border-color: var(--line-2); color: #fff; background: transparent; }
 .btn--block { width: 100%; }
 .btn { text-align: center; line-height: 1.25; }
-.btn--photo { min-height: 48px; padding: 8px 16px; font-size: 15px; gap: 8px; }
+.btn--photo { min-height: 48px; padding: 8px 14px; font-size: 15px; gap: 8px; white-space: nowrap; }
 .btn--photo svg { flex: none; }
 @media (max-width: 380px) { .btn--photo { font-size: 14px; } }
 
@@ -113,7 +113,8 @@ button, input, select, textarea { font: inherit; }
   .logo__mark { width: 36px; height: 36px; border-radius: 9px; font-size: 19px; flex: none; }
   .logo__name { font-size: 19px; letter-spacing: 0.3px; }
   .header__actions { gap: 8px; }
-  .header__phone { width: 40px; height: 40px; border-radius: 10px; }
+  /* The sticky bottom bar already has Call, so the header keeps just logo + Book Now */
+  .header__phone { display: none; }
   .header__actions .btn--sm { min-height: 40px; padding: 0 14px; font-size: 14px; border-radius: 10px; }
 }
 @media (max-width: 360px) {

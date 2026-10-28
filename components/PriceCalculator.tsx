@@ -120,7 +120,7 @@ export default function PriceCalculator() {
           </button>
           <a href={smsHref} className="btn btn--ghost btn--block btn--photo">
             <CameraIcon size={18} />
-            <span>Text a photo for an exact quote</span>
+            <span>Text a photo for a quote</span>
           </a>
           <p className="summary__note">Estimate only. Price depends on size and condition of the vehicle.</p>
         </aside>
