@@ -11,6 +11,7 @@ import Faq from "@/components/Faq";
 import Booking from "@/components/Booking";
 import Footer from "@/components/Footer";
 import MobileBar from "@/components/MobileBar";
+import DemoBanner from "@/components/DemoBanner";
 
 /** Local business data for Google (shows hours, rating, phone in search). */
 function JsonLd() {
@@ -39,6 +40,7 @@ export default function Home() {
   return (
     <>
       <JsonLd />
+      <DemoBanner />
       <Header />
       <main>
         <Hero />

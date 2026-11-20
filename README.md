@@ -26,6 +26,14 @@ npm run dev
    - `public/images/...` → за услугите (`image`), пред/после (`before`, `after`) и `hero.poster`.
 3. `npm run build` за проверка, потоа објави.
 
+## Твојата страница со пакети (/for-detailers/)
+
+`app/for-detailers` е **твојата** продажна страница за детејлерите: 2 пакети, цени и формулар што ти праќа SMS. Сè се менува во `offer.config.ts` (цени, месечна такса, попуст за првите клиенти, твој телефон).
+
+На демо страницата горе има лента „This is a demo… Get this website“ што води до пакетите.
+
+**Кога правиш сајт за вистински клиент:** во `offer.config.ts` стави `showDemoBanner: false` и избриши ја папката `app/for-detailers`.
+
 ## Објавување
 
 Најлесно е на **Vercel**: качи го проектот на GitHub → vercel.com → Import → Deploy. Потоа го поврзуваш доменот на клиентот.
