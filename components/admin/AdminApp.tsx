@@ -44,7 +44,8 @@ export default function AdminApp({ demo = false }: { demo?: boolean }) {
 /* ============================== Login ============================== */
 
 function Login({ a }: { a: Admin }) {
-  const [mode, setMode] = useState<"login" | "request">("login");
+  const [mode, setMode] = useState<"login" | "request" | "password">("login");
+  const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [business, setBusiness] = useState("");
   const [phone, setPhone] = useState("");
@@ -61,6 +62,15 @@ function Login({ a }: { a: Admin }) {
       setState("idle");
       setMsg(r.message);
     }
+  }
+
+  async function loginWithPassword(e: FormEvent) {
+    e.preventDefault();
+    setState("sending");
+    setMsg("");
+    const r = await a.signInWithPassword(email, password);
+    setState("idle");
+    if (!r.ok) setMsg(r.message);
   }
 
   async function sendRequest(e: FormEvent) {
@@ -105,6 +115,16 @@ function Login({ a }: { a: Admin }) {
             </button>
             <p className="adm-muted adm-center-text">New here? <button type="button" className="adm-link" onClick={() => setMode("request")}>Request access</button></p>
             <a className="adm-btn adm-btn--ghost adm-btn--full" href="?demo">Just looking? Try the demo admin</a>
+            <p className="adm-muted adm-center-text adm-small"><button type="button" className="adm-link" onClick={() => { setMode("password"); setMsg(""); }}>Log in with password</button></p>
+          </form>
+        ) : mode === "password" ? (
+          <form onSubmit={loginWithPassword}>
+            <h1>Log in</h1>
+            <label className="adm-field"><span>Email</span><input type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} /></label>
+            <label className="adm-field"><span>Password</span><input type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} /></label>
+            {msg && <p className="adm-error">{msg}</p>}
+            <button className="adm-btn adm-btn--primary adm-btn--full" disabled={state === "sending"}>{state === "sending" ? "Logging in…" : "Log in"}</button>
+            <p className="adm-muted adm-center-text"><button type="button" className="adm-link" onClick={() => { setMode("login"); setMsg(""); }}>Use an email link instead</button></p>
           </form>
         ) : (
           <form onSubmit={sendRequest}>
