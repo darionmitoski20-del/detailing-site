@@ -135,7 +135,7 @@ function Pending({ a }: { a: Admin }) {
 /* ============================== Shell ============================== */
 
 function Shell({ a }: { a: Admin }) {
-  const tabs = a.plan !== "basic" ? TABS : TABS.filter((t) => t.id === "requests");
+  const tabs = a.plan !== "basic" || a.platformAdmin ? TABS : TABS.filter((t) => t.id === "requests");
   const [tab, setTab] = useState<Tab>("requests");
   const newCount = a.bookings.filter((b) => b.status === "new").length;
   const name = a.draft.business.name;
@@ -158,7 +158,7 @@ function Shell({ a }: { a: Admin }) {
             <label className="adm-field adm-field--dark">
               <span>Website</span>
               <select value={a.siteId || ""} onChange={(e) => a.setSiteId(e.target.value)}>
-                {a.sites.map((s) => <option key={s.id} value={s.id}>{s.name}{s.active ? "" : " (paused)"}</option>)}
+                {a.sites.map((s) => <option key={s.id} value={s.id}>{s.name} · {s.plan}{s.active ? "" : " (paused)"}</option>)}
               </select>
             </label>
           )}
@@ -170,7 +170,7 @@ function Shell({ a }: { a: Admin }) {
       <div className="adm-main">
         <header className="adm-top">
           <h2>{tabs.find((t) => t.id === tab)?.label}</h2>
-          {a.plan !== "basic" && !a.locked && (
+          {(a.plan !== "basic" || a.platformAdmin) && (!a.locked || a.platformAdmin) && (
             <div className="adm-top__actions">
               {a.saving ? <span className="adm-pill">Saving…</span> : a.dirty ? <span className="adm-pill adm-pill--warn">Unpublished changes</span> : <span className="adm-pill adm-pill--ok">Live</span>}
               <button className="adm-btn adm-btn--ghost" onClick={a.openPreview}>Preview</button>

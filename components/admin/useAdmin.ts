@@ -69,6 +69,7 @@ export function useAdmin() {
   const [phase, setPhase] = useState<Phase>(demo ? "ready" : "loading");
   const [session, setSession] = useState<Session | null>(null);
   const [sites, setSites] = useState<SiteRow[]>([]);
+  const [platformAdmin, setPlatformAdmin] = useState(false);
   const [siteId, setSiteId] = useState<string | null>(demo ? "demo" : null);
   const [draft, setDraft] = useState<SiteConfig>(() => prepareDraft(demoSite));
   const [publishedJson, setPublishedJson] = useState<string>(() => JSON.stringify(finalizeDraft(prepareDraft(demoSite))));
@@ -80,7 +81,8 @@ export function useAdmin() {
   const loadedSite = useRef<string | null>(null);
 
   const site = sites.find((s) => s.id === siteId) || null;
-  const canEdit = demo || Boolean(site && site.plan !== "basic" && site.active);
+  // The platform admin (you) can edit every site, on any plan.
+  const canEdit = demo || Boolean(site && (platformAdmin || (site.plan !== "basic" && site.active)));
   const locked = Boolean(site && !site.active);
   const plan: SiteRow["plan"] = demo ? "admin" : site?.plan ?? "basic";
   const isPro = plan === "pro";
@@ -115,6 +117,9 @@ export function useAdmin() {
     let cancelled = false;
     (async () => {
       setPhase("loading");
+      // Only the platform admin can read this table, so any row = it's you.
+      const { data: pa } = await supabase.from("platform_admins").select("email").limit(1);
+      if (!cancelled) setPlatformAdmin(Boolean(pa && pa.length));
       const { data, error: err } = await supabase
         .from("sites")
         .select("id, slug, name, plan, active, build_hook, draft")
@@ -316,7 +321,7 @@ export function useAdmin() {
     draft, update, dirty, saving, publish, openPreview,
     bookings, setBookingStatus, refreshBookings,
     upload, signIn, signOut, requestAccess,
-    canEdit, locked, plan, isPro,
+    canEdit, locked, plan, isPro, platformAdmin,
     error, setError, toast,
   };
 }
