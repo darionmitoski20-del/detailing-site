@@ -30,11 +30,10 @@ function JsonLd({ site }: { site: SiteConfig }) {
       site.mode === "studio" && site.business.address
         ? { "@type": "PostalAddress", streetAddress: site.business.address }
         : { "@type": "PostalAddress", addressLocality: site.business.city, addressRegion: site.business.state },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: site.rating.score,
-      reviewCount: site.rating.count,
-    },
+    aggregateRating:
+      site.rating.count > 0
+        ? { "@type": "AggregateRating", ratingValue: site.rating.score, reviewCount: site.rating.count }
+        : undefined,
   };
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />;
 }

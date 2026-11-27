@@ -287,3 +287,5 @@
   .adm-tabbar { overflow-x: auto; }
   .adm-tabbar button { min-width: 64px; }
 }
+.adm-review-edit { padding-bottom: 14px; border-bottom: 1px solid var(--a-line); }
+.adm-review-edit .adm-field { margin-bottom: 8px; }

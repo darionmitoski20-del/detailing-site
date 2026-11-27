@@ -8,9 +8,10 @@ import { asset } from "@/lib/asset";
 import { mapEmbedSrc } from "@/lib/maps";
 import ClientsPanel from "./ClientsPanel";
 import OverviewPanel from "./OverviewPanel";
+import ReviewsPanel from "./ReviewsPanel";
 import { PHOTO_LIMIT, useAdmin, type Admin, type BookingRow, type BookingStatus } from "./useAdmin";
 
-type Tab = "requests" | "services" | "photos" | "business" | "sections" | "clients" | "overview";
+type Tab = "requests" | "services" | "photos" | "business" | "sections" | "clients" | "overview" | "reviews";
 
 const TABS: { id: Tab; label: string; icon: ReactNode }[] = [
   { id: "requests", label: "Requests", icon: <Ico d="M4 4h16v12H5.2L4 17.2V4zm3 4h10M7 11h7" /> },
@@ -19,6 +20,7 @@ const TABS: { id: Tab; label: string; icon: ReactNode }[] = [
   { id: "business", label: "Business info", icon: <Ico d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6" /> },
   { id: "sections", label: "Sections", icon: <Ico d="M4 5h16M4 12h16M4 19h16" /> },
 ];
+const REVIEWS_TAB = { id: "reviews" as Tab, label: "Reviews & FAQ", icon: <Ico d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z" /> };
 const OVERVIEW_TAB = { id: "overview" as Tab, label: "Overview", icon: <Ico d="M3 3v18h18M7 15l4-4 3 3 6-6" /> };
 const CLIENTS_TAB = { id: "clients" as Tab, label: "Clients", icon: <Ico d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8" /> };
 
@@ -160,7 +162,9 @@ function Pending({ a }: { a: Admin }) {
 /* ============================== Shell ============================== */
 
 function Shell({ a }: { a: Admin }) {
-  const siteTabs = !a.site && !a.demo ? [] : a.plan !== "basic" || a.platformAdmin ? TABS : TABS.filter((t) => t.id === "requests");
+  const baseTabs = !a.site && !a.demo ? [] : a.plan !== "basic" || a.platformAdmin ? TABS : TABS.filter((t) => t.id === "requests");
+  // Reviews & FAQ are edited only by you (platform admin), never by the detailer.
+  const siteTabs = a.platformAdmin && a.site ? [...baseTabs, REVIEWS_TAB] : baseTabs;
   const mainTabs = a.platformAdmin ? [OVERVIEW_TAB, CLIENTS_TAB] : [];
   const tabs = [...mainTabs, ...siteTabs];
   const [tab, setTab] = useState<Tab>(a.platformAdmin ? "overview" : "requests");
@@ -233,6 +237,7 @@ function Shell({ a }: { a: Admin }) {
           {tab === "photos" && <PhotosPanel a={a} />}
           {tab === "business" && <BusinessPanel a={a} />}
           {tab === "sections" && <SectionsPanel a={a} />}
+          {tab === "reviews" && <ReviewsPanel a={a} />}
           {tab === "overview" && <OverviewPanel a={a} onOpen={(id) => { a.setSiteId(id); setTab("requests"); }} onClients={() => setTab("clients")} />}
           {tab === "clients" && <ClientsPanel a={a} onOpen={(id) => { a.setSiteId(id); setTab("requests"); }} />}
         </div>
