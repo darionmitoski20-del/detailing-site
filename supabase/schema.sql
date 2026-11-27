@@ -11,7 +11,7 @@ create table if not exists public.sites (
   id           uuid primary key default gen_random_uuid(),
   slug         text unique not null,                 -- short name, e.g. "shine-pro"
   name         text not null,                        -- business name
-  plan         text not null default 'admin' check (plan in ('basic', 'admin')),
+  plan         text not null default 'admin' check (plan in ('basic', 'admin', 'pro')),
   draft        jsonb,                                -- what the detailer is editing (not public)
   build_hook   text,                                 -- Netlify build hook URL, called on Publish
   active       boolean not null default true,        -- false = admin locked (unpaid)
@@ -84,13 +84,13 @@ language sql stable security definer set search_path = public as $$
   )
 $$;
 
--- Editing is allowed only on the "admin" plan, while the site is active.
+-- Editing is allowed on the "admin" and "pro" plans, while the site is active.
 create or replace function public.can_edit_site(sid uuid) returns boolean
 language sql stable security definer set search_path = public as $$
   select public.is_platform_admin() or exists (
     select 1 from public.sites s
     join public.site_members m on m.site_id = s.id
-    where s.id = sid and s.plan = 'admin' and s.active
+    where s.id = sid and s.plan in ('admin', 'pro') and s.active
       and lower(m.email) = public.current_email()
   )
 $$;

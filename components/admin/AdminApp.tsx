@@ -135,7 +135,7 @@ function Pending({ a }: { a: Admin }) {
 /* ============================== Shell ============================== */
 
 function Shell({ a }: { a: Admin }) {
-  const tabs = a.plan === "admin" ? TABS : TABS.filter((t) => t.id === "requests");
+  const tabs = a.plan !== "basic" ? TABS : TABS.filter((t) => t.id === "requests");
   const [tab, setTab] = useState<Tab>("requests");
   const newCount = a.bookings.filter((b) => b.status === "new").length;
   const name = a.draft.business.name;
@@ -170,7 +170,7 @@ function Shell({ a }: { a: Admin }) {
       <div className="adm-main">
         <header className="adm-top">
           <h2>{tabs.find((t) => t.id === tab)?.label}</h2>
-          {a.plan === "admin" && !a.locked && (
+          {a.plan !== "basic" && !a.locked && (
             <div className="adm-top__actions">
               {a.saving ? <span className="adm-pill">Saving…</span> : a.dirty ? <span className="adm-pill adm-pill--warn">Unpublished changes</span> : <span className="adm-pill adm-pill--ok">Live</span>}
               <button className="adm-btn adm-btn--ghost" onClick={a.openPreview}>Preview</button>
@@ -621,7 +621,7 @@ function BusinessPanel({ a }: { a: Admin }) {
         )}
       </Card>
 
-      <Card title="Google Maps & reviews" hint="Open Google Maps, find your business, press Share → Copy link, and paste it here.">
+      <Card title="Google Maps" hint="Open Google Maps, find your business, press Share → Copy link, and paste it here.">
         <Field label="Google Maps link" wide>
           <input
             value={d.maps?.link || ""}
@@ -635,12 +635,16 @@ function BusinessPanel({ a }: { a: Admin }) {
         <p className="adm-muted adm-small">
           {d.maps?.link ? "The exact pin shows on your live website after Publish." : "No link yet — the map shows your city."}
         </p>
-        <div className="adm-toggle-row">
+        <div className={`adm-toggle-row ${a.isPro ? "" : "is-locked"}`}>
           <div>
-            <b>Show my Google reviews</b>
-            <p className="adm-muted adm-small">Your real Google rating, review count and the newest reviews with photos. Updated every day.</p>
+            <b>Show my Google reviews {!a.isPro && <span className="adm-pro">PRO</span>}</b>
+            <p className="adm-muted adm-small">
+              {a.isPro
+                ? "Your real Google rating, review count and the newest reviews with photos. Updated every day."
+                : "Your real Google rating and newest reviews with photos, updated every day. Available in the Pro plan — contact us to upgrade."}
+            </p>
           </div>
-          <Toggle label="Show Google reviews" on={Boolean(d.googleReviews)} onChange={(v) => set((x) => ({ ...x, googleReviews: v }))} />
+          <Toggle label="Show Google reviews" on={a.isPro && Boolean(d.googleReviews)} onChange={(v) => a.isPro && set((x) => ({ ...x, googleReviews: v }))} />
         </div>
       </Card>
 
