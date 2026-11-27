@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { site } from "@/site.config";
-import { smsHref } from "@/lib/links";
+import type { SiteConfig } from "@/site.config";
+import { links } from "@/lib/links";
 import { CameraIcon } from "./Icons";
 
 export type EstimateSelection = { vehicle: string; service: string; total: number };
@@ -10,7 +10,8 @@ export const ESTIMATE_EVENT = "estimate:select";
 
 const money = (n: number) => "$" + n.toLocaleString("en-US");
 
-export default function PriceCalculator() {
+export default function PriceCalculator({ site }: { site: SiteConfig }) {
+  const { smsHref } = links(site);
   const c = site.calculator;
   const [vehicle, setVehicle] = useState(c.defaults.vehicle);
   const [service, setService] = useState(c.defaults.service);

@@ -1,7 +1,7 @@
-import { site } from "@/site.config";
+import type { SiteConfig } from "@/site.config";
 import { Stars } from "./Icons";
 
-export default function Reviews() {
+export default function Reviews({ site }: { site: SiteConfig }) {
   const summary = (
     <>
       <span className="rating-box__score">{site.rating.score}</span>

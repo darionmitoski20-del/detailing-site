@@ -348,3 +348,8 @@ button, input, select, textarea { font: inherit; }
 .plan__features svg { flex: none; margin-top: 1px; color: var(--accent-dark); }
 .btn--dark { background: var(--ink); color: #fff; }
 @media (max-width: 600px) { .plan { padding: 28px 22px; } .plan__amount { font-size: 56px; } }
+
+/* ---------- Photo gallery ---------- */
+.photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.photo-grid img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; }
+.logo__img { height: 40px; width: auto; max-width: 120px; object-fit: contain; border-radius: 8px; }

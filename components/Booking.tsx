@@ -1,15 +1,18 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
-import { site, modeCopy } from "@/site.config";
-import { smsHref, telHref, whatsappHref } from "@/lib/links";
+import { modeCopy, type SiteConfig } from "@/site.config";
+import { links } from "@/lib/links";
+import { hasBackend, SITE_ID, SUPABASE_ANON_KEY, SUPABASE_URL } from "@/lib/siteData";
 import { ESTIMATE_EVENT, type EstimateSelection } from "./PriceCalculator";
 import { MessageIcon, PhoneIcon, WhatsAppIcon } from "./Icons";
 
-export default function Booking() {
+export default function Booking({ site }: { site: SiteConfig }) {
+  const { smsHref, telHref, whatsappHref } = links(site);
   const copy = modeCopy[site.mode];
   const vehicles = site.calculator.vehicles.map((v) => v.label);
-  const services = site.services.map((s) => s.name);
+  const services = site.services.filter((s) => !s.hidden).map((s) => s.name);
+  const online = hasBackend && Boolean(SITE_ID);
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -18,7 +21,10 @@ export default function Booking() {
   const [date, setDate] = useState("");
   const [details, setDetails] = useState("");
   const [estimate, setEstimate] = useState<number | null>(null);
+  const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   // Pre-fill from the price calculator ("Book this detail")
   useEffect(() => {
@@ -49,11 +55,44 @@ export default function Booking() {
       .join("\n");
   }
 
-  function onSubmit(e: FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const body = encodeURIComponent(buildMessage());
-    window.location.href = `${smsHref}?&body=${body}`;
-    setSent(true);
+    if (!online) {
+      // Demo / no database: open a text message with the details.
+      window.location.href = `${smsHref}?&body=${encodeURIComponent(buildMessage())}`;
+      setSent(true);
+      return;
+    }
+    setSending(true);
+    setFailed(false);
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/bookings`, {
+        method: "POST",
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          "Content-Type": "application/json",
+          Prefer: "return=minimal",
+        },
+        body: JSON.stringify({
+          site_id: SITE_ID,
+          name: name.trim(),
+          phone: phone.trim(),
+          email: email.trim() || null,
+          vehicle,
+          service,
+          estimate: estimate ?? null,
+          preferred_date: date || null,
+          details: details.trim() || null,
+        }),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+      setSent(true);
+    } catch {
+      setFailed(true);
+    } finally {
+      setSending(false);
+    }
   }
 
   const mailHref = `mailto:${site.contact.email}?subject=${encodeURIComponent("Booking request")}&body=${encodeURIComponent(buildMessage())}`;
@@ -86,6 +125,11 @@ export default function Booking() {
               <input type="tel" required autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(000) 000-0000" />
             </label>
           </div>
+          {online ? (
+            <label className="field">Email (optional, for a confirmation)
+              <input type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" />
+            </label>
+          ) : null}
           <div className="form__row">
             <label className="field">Vehicle
               <select value={vehicle} onChange={(e) => setVehicle(e.target.value)}>
@@ -106,8 +150,18 @@ export default function Booking() {
               <input type="text" value={details} onChange={(e) => setDetails(e.target.value)} placeholder={copy.addressPlaceholder} />
             </label>
           </div>
-          <button type="submit" className="btn btn--accent btn--block">Send booking request</button>
-          {sent ? (
+          <button type="submit" className="btn btn--accent btn--block" disabled={sending}>
+            {sending ? "Sending…" : "Send booking request"}
+          </button>
+          {online && sent ? (
+            <p className="form__ok" role="status">Thanks! We got your request and will text you to confirm.</p>
+          ) : online && failed ? (
+            <p className="form__ok" role="alert" style={{ background: "#fef2f2", color: "#991b1b" }}>
+              Could not send right now. Please <a href={smsHref}>text us</a> or call {site.contact.phoneDisplay}.
+            </p>
+          ) : online ? (
+            <p className="form__note">We confirm by text during business hours.</p>
+          ) : sent ? (
             <p className="form__ok" role="status">
               Your messaging app should open with the request ready to send. Not working?{" "}
               <a href={mailHref}>Send it by email instead</a>.

@@ -1,7 +1,7 @@
-import { site } from "@/site.config";
+import type { SiteConfig } from "@/site.config";
 import { asset } from "@/lib/asset";
 
-export default function Services() {
+export default function Services({ site }: { site: SiteConfig }) {
   return (
     <section id="services" className="section section--light">
       <div className="container">
@@ -10,7 +10,7 @@ export default function Services() {
           <h2 className="h2">Everything your car needs, inside and out</h2>
         </div>
         <div className="cards">
-          {site.services.map((s) => (
+          {site.services.filter((s) => !s.hidden).map((s) => (
             <article className="card" key={s.name}>
               <div className="card__media">
                 {s.image ? (

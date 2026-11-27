@@ -1,7 +1,9 @@
-import { bookHref, bookIsExternal, smsHref, telHref } from "@/lib/links";
+import { links } from "@/lib/links";
+import type { SiteConfig } from "@/site.config";
 
 /** Sticky contact bar shown only on phones. */
-export default function MobileBar() {
+export default function MobileBar({ site }: { site: SiteConfig }) {
+  const { bookHref, bookIsExternal, smsHref, telHref } = links(site);
   return (
     <div className="mobile-bar">
       <a href={telHref} className="btn btn--white">Call</a>

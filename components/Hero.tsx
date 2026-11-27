@@ -1,9 +1,10 @@
-import { site, modeCopy } from "@/site.config";
-import { bookHref, bookIsExternal, smsHref, telHref, whatsappHref } from "@/lib/links";
+import { modeCopy, type SiteConfig } from "@/site.config";
+import { links } from "@/lib/links";
 import { asset } from "@/lib/asset";
 import { CalendarIcon, MessageIcon, PhoneIcon, Stars } from "./Icons";
 
-export default function Hero() {
+export default function Hero({ site }: { site: SiteConfig }) {
+  const { bookHref, bookIsExternal, smsHref, telHref, whatsappHref } = links(site);
   const copy = modeCopy[site.mode];
   const area = site.mode === "mobile" ? `Serving ${site.business.serviceArea.slice(0, 3).join(", ")} & more` : site.business.address;
 

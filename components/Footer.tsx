@@ -1,7 +1,8 @@
-import { site } from "@/site.config";
-import { telHref } from "@/lib/links";
+import type { SiteConfig } from "@/site.config";
+import { links } from "@/lib/links";
 
-export default function Footer() {
+export default function Footer({ site }: { site: SiteConfig }) {
+  const { telHref } = links(site);
   const where =
     site.mode === "mobile"
       ? `Mobile detailing serving ${site.business.serviceArea.join(", ")} and nearby.`
