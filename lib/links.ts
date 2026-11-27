@@ -1,7 +1,14 @@
-import { site } from "@/site.config";
+import type { SiteConfig } from "@/site.config";
 
-export const telHref = `tel:+${site.contact.phone}`;
-export const smsHref = `sms:+${site.contact.phone}`;
-export const whatsappHref = site.contact.whatsapp ? `https://wa.me/${site.contact.whatsapp}` : "";
-export const bookHref = site.contact.bookingUrl || "#book";
-export const bookIsExternal = Boolean(site.contact.bookingUrl);
+/** Call / text / booking links for one site. */
+export function links(site: SiteConfig) {
+  const phone = (site.contact.phone || "").replace(/\D/g, "");
+  const wa = (site.contact.whatsapp || "").replace(/\D/g, "");
+  return {
+    telHref: `tel:+${phone}`,
+    smsHref: `sms:+${phone}`,
+    whatsappHref: wa ? `https://wa.me/${wa}` : "",
+    bookHref: site.contact.bookingUrl || "#book",
+    bookIsExternal: Boolean(site.contact.bookingUrl),
+  };
+}

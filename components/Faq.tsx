@@ -1,9 +1,9 @@
 "use client";
 
 import { useId, useState } from "react";
-import { site, modeCopy } from "@/site.config";
+import { modeCopy, type SiteConfig } from "@/site.config";
 
-export default function Faq() {
+export default function Faq({ site }: { site: SiteConfig }) {
   const copy = modeCopy[site.mode];
   const first =
     site.mode === "studio"

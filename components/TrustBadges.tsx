@@ -1,7 +1,7 @@
-import { site } from "@/site.config";
+import type { SiteConfig } from "@/site.config";
 import { AwardIcon, CheckIcon, ShieldIcon, SparkleIcon } from "./Icons";
 
-export default function TrustBadges() {
+export default function TrustBadges({ site }: { site: SiteConfig }) {
   const badges = [
     { icon: <ShieldIcon size={22} />, title: "Licensed & Insured", sub: "Your car is covered" },
     { icon: <CheckIcon size={22} />, title: "Satisfaction Guarantee", sub: "Not happy? We redo it" },

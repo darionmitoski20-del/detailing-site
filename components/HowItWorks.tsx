@@ -1,6 +1,6 @@
-import { site, modeCopy } from "@/site.config";
+import { modeCopy, type SiteConfig } from "@/site.config";
 
-export default function HowItWorks() {
+export default function HowItWorks({ site }: { site: SiteConfig }) {
   const copy = modeCopy[site.mode];
   const steps = [
     { title: "Book in 60 seconds", text: "Book online, call, or text us. Pick a time that works for you." },

@@ -13,7 +13,40 @@ export type Service = {
   from: number; // "from $X" price shown on the card
   description: string;
   image?: string; // e.g. "/images/full-detail.jpg" (put file in /public/images)
+  hidden?: boolean; // hidden from the website (set in the admin panel)
 };
+
+/** Parts of the page, in the order they show. Set in the admin panel. */
+export type SectionId =
+  | "hero" | "badges" | "services" | "calc" | "beforeafter" | "photos" | "how" | "reviews" | "faq" | "book";
+
+export const SECTION_LABELS: Record<SectionId, string> = {
+  hero: "Top banner with video",
+  badges: "Trust badges",
+  services: "Services",
+  calc: "Price calculator",
+  beforeafter: "Before & after",
+  photos: "Photo gallery",
+  how: "How it works",
+  reviews: "Reviews",
+  faq: "Questions (FAQ)",
+  book: "Booking form",
+};
+
+export const DEFAULT_SECTIONS: { id: SectionId; on: boolean }[] = [
+  { id: "hero", on: true },
+  { id: "badges", on: true },
+  { id: "services", on: true },
+  { id: "calc", on: true },
+  { id: "beforeafter", on: true },
+  { id: "photos", on: true },
+  { id: "how", on: true },
+  { id: "reviews", on: true },
+  { id: "faq", on: true },
+  { id: "book", on: true },
+];
+
+export type DayHours = { day: string; open: boolean; from: string; to: string }; // from/to "08:00"
 
 export type Review = {
   name: string;
@@ -34,6 +67,7 @@ export type SiteConfig = {
   business: {
     name: string;
     initial: string;
+    logo?: string; // logo image URL (uploaded in the admin panel). Empty = colored letter.
     tagline: string;
     city: string;
     state: string;
@@ -72,6 +106,12 @@ export type SiteConfig = {
   gallery: GallerySet[];
   reviews: Review[];
   faq: { q: string; a: string }[];
+  /** Extra photo grid (up to 50). Uploaded in the admin panel. */
+  photos?: string[];
+  /** Section order and on/off. Missing = all on, default order. */
+  sections?: { id: SectionId; on: boolean }[];
+  /** Opening hours per day, edited in the admin panel (business.hours is built from it). */
+  hoursWeek?: DayHours[];
 };
 
 // Unsplash image helpers (resized, compressed on their CDN)

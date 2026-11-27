@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { site } from "@/site.config";
+import type { SiteConfig } from "@/site.config";
 import { asset } from "@/lib/asset";
 import { ArrowsIcon } from "./Icons";
 
-export default function BeforeAfter() {
+export default function BeforeAfter({ site }: { site: SiteConfig }) {
   const sets = site.gallery;
   const [active, setActive] = useState(0);
   const [pos, setPos] = useState(50);
