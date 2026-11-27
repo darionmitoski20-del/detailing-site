@@ -189,3 +189,13 @@ create policy media_delete on storage.objects for delete to authenticated
 -- 2) Add a client site and give the detailer access:
 --    insert into public.sites (slug, name, plan) values ('shine-pro', 'Shine Pro Detailing', 'admin') returning id;
 --    insert into public.site_members (site_id, email) values ('<id from above>', 'owner@theirbusiness.com');
+
+-- ============================================================
+--  OPTIONAL: rebuild every client site once a day (fresh Google reviews).
+--  Database → Extensions: turn on pg_cron and pg_net, then run:
+-- ============================================================
+-- select cron.schedule(
+--   'daily-rebuild',
+--   '0 9 * * *',  -- every day 09:00 UTC (4–5 AM New York)
+--   $$ select net.http_post(url := build_hook) from public.sites where active and build_hook is not null $$
+-- );

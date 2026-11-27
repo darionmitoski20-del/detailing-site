@@ -11,6 +11,7 @@ import Photos from "./Photos";
 import HowItWorks from "./HowItWorks";
 import Reviews from "./Reviews";
 import Faq from "./Faq";
+import MapSection from "./MapSection";
 import Booking from "./Booking";
 import Footer from "./Footer";
 import MobileBar from "./MobileBar";
@@ -42,7 +43,14 @@ function JsonLd({ site }: { site: SiteConfig }) {
 export function resolveSections(site: SiteConfig): { id: SectionId; on: boolean }[] {
   const saved = site.sections || [];
   const known = new Set(saved.map((s) => s.id));
-  return [...saved.filter((s) => DEFAULT_SECTIONS.some((d) => d.id === s.id)), ...DEFAULT_SECTIONS.filter((d) => !known.has(d.id))];
+  const out = saved.filter((s) => DEFAULT_SECTIONS.some((d) => d.id === s.id));
+  // A section added in a later version goes right after the one it follows by default.
+  DEFAULT_SECTIONS.forEach((d, i) => {
+    if (known.has(d.id)) return;
+    const prev = i > 0 ? out.findIndex((s) => s.id === DEFAULT_SECTIONS[i - 1].id) : -1;
+    out.splice(prev + 1, 0, d);
+  });
+  return out;
 }
 
 /**
@@ -60,6 +68,7 @@ export default function SiteView({ site, banner }: { site: SiteConfig; banner?: 
     how: <HowItWorks key="how" site={site} />,
     reviews: <Reviews key="reviews" site={site} />,
     faq: <Faq key="faq" site={site} />,
+    map: <MapSection key="map" site={site} />,
     book: <Booking key="book" site={site} />,
   };
   const sections = resolveSections(site).filter((s) => s.on);

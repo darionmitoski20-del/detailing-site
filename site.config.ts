@@ -18,7 +18,7 @@ export type Service = {
 
 /** Parts of the page, in the order they show. Set in the admin panel. */
 export type SectionId =
-  | "hero" | "badges" | "services" | "calc" | "beforeafter" | "photos" | "how" | "reviews" | "faq" | "book";
+  | "hero" | "badges" | "services" | "calc" | "beforeafter" | "photos" | "how" | "reviews" | "faq" | "map" | "book";
 
 export const SECTION_LABELS: Record<SectionId, string> = {
   hero: "Top banner with video",
@@ -30,6 +30,7 @@ export const SECTION_LABELS: Record<SectionId, string> = {
   how: "How it works",
   reviews: "Reviews",
   faq: "Questions (FAQ)",
+  map: "Map & location",
   book: "Booking form",
 };
 
@@ -43,6 +44,7 @@ export const DEFAULT_SECTIONS: { id: SectionId; on: boolean }[] = [
   { id: "how", on: true },
   { id: "reviews", on: true },
   { id: "faq", on: true },
+  { id: "map", on: true },
   { id: "book", on: true },
 ];
 
@@ -53,6 +55,9 @@ export type Review = {
   text: string;
   service: string;
   when: string; // e.g. "2 weeks ago"
+  rating?: number; // 1–5 (Google reviews)
+  photo?: string; // reviewer's profile photo (Google reviews)
+  url?: string; // link to the reviewer's Google profile
 };
 
 export type GallerySet = {
@@ -94,7 +99,7 @@ export type SiteConfig = {
     video?: string; // "/video/hero.mp4" (put file in /public/video)
     poster?: string; // "/images/hero-poster.jpg" — shown while the video loads
   };
-  rating: { score: number; count: number };
+  rating: { score: number; count: number; fromGoogle?: boolean };
   services: Service[];
   calculator: {
     vehicles: { id: string; label: string; multiplier: number }[];
@@ -106,6 +111,13 @@ export type SiteConfig = {
   gallery: GallerySet[];
   reviews: Review[];
   faq: { q: string; a: string }[];
+  /** Google Maps: the link (or embed code) pasted in the admin. Shows the map and a Directions button. */
+  maps?: {
+    link?: string;
+    resolved?: string; // full Google Maps URL (filled at build time from a short maps.app.goo.gl link)
+  };
+  /** Show the real Google rating and reviews (refreshed when the site is rebuilt). */
+  googleReviews?: boolean;
   /** Extra photo grid (up to 50). Uploaded in the admin panel. */
   photos?: string[];
   /** Section order and on/off. Missing = all on, default order. */

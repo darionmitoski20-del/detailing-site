@@ -5,6 +5,7 @@ import { SECTION_LABELS, type SiteConfig } from "@/site.config";
 import { resolveSections } from "@/components/SiteView";
 import { WEEK_DAYS } from "@/lib/hours";
 import { asset } from "@/lib/asset";
+import { mapEmbedSrc } from "@/lib/maps";
 import { PHOTO_LIMIT, useAdmin, type Admin, type BookingRow, type BookingStatus } from "./useAdmin";
 
 type Tab = "requests" | "services" | "photos" | "business" | "sections";
@@ -618,6 +619,29 @@ function BusinessPanel({ a }: { a: Admin }) {
             </div>
           </>
         )}
+      </Card>
+
+      <Card title="Google Maps & reviews" hint="Open Google Maps, find your business, press Share → Copy link, and paste it here.">
+        <Field label="Google Maps link" wide>
+          <input
+            value={d.maps?.link || ""}
+            placeholder="https://maps.app.goo.gl/…"
+            onChange={(e) => set((x) => ({ ...x, maps: { link: e.target.value.trim() } }))}
+          />
+        </Field>
+        <div className="adm-mapprev">
+          <iframe title="Map preview" src={mapEmbedSrc(d)} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+        </div>
+        <p className="adm-muted adm-small">
+          {d.maps?.link ? "The exact pin shows on your live website after Publish." : "No link yet — the map shows your city."}
+        </p>
+        <div className="adm-toggle-row">
+          <div>
+            <b>Show my Google reviews</b>
+            <p className="adm-muted adm-small">Your real Google rating, review count and the newest reviews with photos. Updated every day.</p>
+          </div>
+          <Toggle label="Show Google reviews" on={Boolean(d.googleReviews)} onChange={(v) => set((x) => ({ ...x, googleReviews: v }))} />
+        </div>
       </Card>
 
       <Card title="Opening hours">
