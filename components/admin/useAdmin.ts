@@ -304,6 +304,16 @@ export function useAdmin(forceDemo = false) {
     [supabase],
   );
 
+  /** Password login (optional — mainly for you, so you don't depend on email links). */
+  const signInWithPassword = useCallback(
+    async (email: string, password: string) => {
+      if (!supabase) return { ok: false, message: "Demo mode: sign-in is not connected." };
+      const { error: err } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+      return err ? { ok: false, message: err.message === "Invalid login credentials" ? "Wrong email or password." : err.message } : { ok: true, message: "" };
+    },
+    [supabase],
+  );
+
   const requestAccess = useCallback(
     async (payload: { email: string; business: string; phone: string }) => {
       if (!supabase) return { ok: true };
@@ -321,7 +331,7 @@ export function useAdmin(forceDemo = false) {
     demo, phase, session, sites, site, siteId, setSiteId: (id: string) => { loadedSite.current = null; setSiteId(id); },
     draft, update, dirty, saving, publish, openPreview,
     bookings, setBookingStatus, refreshBookings,
-    upload, signIn, signOut, requestAccess,
+    upload, signIn, signInWithPassword, signOut, requestAccess,
     canEdit, locked, plan, isPro, platformAdmin, loadSites, flash,
     error, setError, toast,
   };
