@@ -117,6 +117,16 @@ create trigger sites_protect before update on public.sites
 alter table public.sites           enable row level security;
 alter table public.published_sites enable row level security;
 alter table public.site_members    enable row level security;
+-- New Supabase projects no longer expose tables to the API automatically, so grant access
+-- explicitly. Row Level Security below still decides which rows each person can see.
+grant usage on schema public to anon, authenticated;
+grant select on public.published_sites to anon, authenticated;
+grant insert on public.bookings to anon, authenticated;
+grant insert on public.access_requests to anon, authenticated;
+grant select, insert, update, delete on public.sites, public.published_sites, public.site_members,
+  public.platform_admins, public.bookings, public.access_requests to authenticated;
+grant execute on all functions in schema public to anon, authenticated;
+
 alter table public.platform_admins enable row level security;
 alter table public.bookings        enable row level security;
 alter table public.access_requests enable row level security;
