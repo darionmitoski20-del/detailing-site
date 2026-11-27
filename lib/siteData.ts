@@ -33,7 +33,7 @@ export async function getSiteData(): Promise<SiteConfig> {
   try {
     const res = await fetch(
       `${SUPABASE_URL}/rest/v1/published_sites?site_id=eq.${encodeURIComponent(SITE_ID)}&select=data`,
-      { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }, cache: "no-store" },
+      { headers: { apikey: SUPABASE_ANON_KEY }, cache: "no-store" },
     );
     if (!res.ok) throw new Error(`Supabase ${res.status}`);
     const rows = (await res.json()) as { data: Partial<SiteConfig> }[];
