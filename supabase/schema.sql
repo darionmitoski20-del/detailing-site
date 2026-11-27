@@ -170,6 +170,8 @@ drop policy if exists access_insert on public.access_requests;
 create policy access_insert on public.access_requests for insert to anon, authenticated with check (true);
 drop policy if exists access_select on public.access_requests;
 create policy access_select on public.access_requests for select to authenticated using (public.is_platform_admin());
+drop policy if exists access_delete on public.access_requests;
+create policy access_delete on public.access_requests for delete to authenticated using (public.is_platform_admin());
 
 -- ---------- Photo & video storage ----------
 -- Public bucket; each site writes only inside its own folder: <site_id>/...
