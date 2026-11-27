@@ -6,9 +6,10 @@ import { resolveSections } from "@/components/SiteView";
 import { WEEK_DAYS } from "@/lib/hours";
 import { asset } from "@/lib/asset";
 import { mapEmbedSrc } from "@/lib/maps";
+import ClientsPanel from "./ClientsPanel";
 import { PHOTO_LIMIT, useAdmin, type Admin, type BookingRow, type BookingStatus } from "./useAdmin";
 
-type Tab = "requests" | "services" | "photos" | "business" | "sections";
+type Tab = "requests" | "services" | "photos" | "business" | "sections" | "clients";
 
 const TABS: { id: Tab; label: string; icon: ReactNode }[] = [
   { id: "requests", label: "Requests", icon: <Ico d="M4 4h16v12H5.2L4 17.2V4zm3 4h10M7 11h7" /> },
@@ -17,6 +18,7 @@ const TABS: { id: Tab; label: string; icon: ReactNode }[] = [
   { id: "business", label: "Business info", icon: <Ico d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6" /> },
   { id: "sections", label: "Sections", icon: <Ico d="M4 5h16M4 12h16M4 19h16" /> },
 ];
+const CLIENTS_TAB = { id: "clients" as Tab, label: "Clients", icon: <Ico d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8" /> };
 
 const SWATCHES = ["#E11D2E", "#F97316", "#EAB308", "#16A34A", "#0EA5E9", "#2563EB", "#7C3AED", "#DB2777", "#111827", "#B8860B"];
 
@@ -136,10 +138,11 @@ function Pending({ a }: { a: Admin }) {
 /* ============================== Shell ============================== */
 
 function Shell({ a }: { a: Admin }) {
-  const tabs = a.plan !== "basic" || a.platformAdmin ? TABS : TABS.filter((t) => t.id === "requests");
-  const [tab, setTab] = useState<Tab>("requests");
+  const siteTabs = !a.site && !a.demo ? [] : a.plan !== "basic" || a.platformAdmin ? TABS : TABS.filter((t) => t.id === "requests");
+  const tabs = a.platformAdmin ? [...siteTabs, CLIENTS_TAB] : siteTabs;
+  const [tab, setTab] = useState<Tab>(a.site || a.demo ? "requests" : "clients");
   const newCount = a.bookings.filter((b) => b.status === "new").length;
-  const name = a.draft.business.name;
+  const name = a.site || a.demo ? a.draft.business.name : "Main admin";
 
   return (
     <div className="adm">
@@ -171,7 +174,7 @@ function Shell({ a }: { a: Admin }) {
       <div className="adm-main">
         <header className="adm-top">
           <h2>{tabs.find((t) => t.id === tab)?.label}</h2>
-          {(a.plan !== "basic" || a.platformAdmin) && (!a.locked || a.platformAdmin) && (
+          {tab !== "clients" && (a.site || a.demo) && (a.plan !== "basic" || a.platformAdmin) && (!a.locked || a.platformAdmin) && (
             <div className="adm-top__actions">
               {a.saving ? <span className="adm-pill">Saving…</span> : a.dirty ? <span className="adm-pill adm-pill--warn">Unpublished changes</span> : <span className="adm-pill adm-pill--ok">Live</span>}
               <button className="adm-btn adm-btn--ghost" onClick={a.openPreview}>Preview</button>
@@ -198,6 +201,7 @@ function Shell({ a }: { a: Admin }) {
           {tab === "photos" && <PhotosPanel a={a} />}
           {tab === "business" && <BusinessPanel a={a} />}
           {tab === "sections" && <SectionsPanel a={a} />}
+          {tab === "clients" && <ClientsPanel a={a} onOpen={(id) => { a.setSiteId(id); setTab("requests"); }} />}
         </div>
       </div>
 

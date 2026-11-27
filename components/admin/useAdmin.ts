@@ -112,38 +112,39 @@ export function useAdmin(forceDemo = false) {
   }, [supabase]);
 
   // ---- Which sites can this person open ----
+  const loadSites = useCallback(async () => {
+    if (!supabase) return;
+    // Only the platform admin can read this table, so any row = it's you.
+    const { data: pa } = await supabase.from("platform_admins").select("email").limit(1);
+    const isPA = Boolean(pa && pa.length);
+    setPlatformAdmin(isPA);
+    const { data, error: err } = await supabase
+      .from("sites")
+      .select("id, slug, name, plan, active, build_hook, draft")
+      .order("name");
+    if (err) {
+      setError(err.message);
+      setPhase("pending");
+      return;
+    }
+    const rows = (data || []) as SiteRow[];
+    setSites(rows);
+    if (rows.length === 0) {
+      setSiteId(null);
+      // You (platform admin) still get in, to add your first client.
+      setPhase(isPA ? "ready" : "pending");
+      return;
+    }
+    const preferred = rows.find((r) => r.id === SITE_ID) || rows[0];
+    setSiteId((cur) => (cur && rows.some((r) => r.id === cur) ? cur : preferred.id));
+    setPhase("ready");
+  }, [supabase]);
+
   useEffect(() => {
     if (!supabase || !session) return;
-    let cancelled = false;
-    (async () => {
-      setPhase("loading");
-      // Only the platform admin can read this table, so any row = it's you.
-      const { data: pa } = await supabase.from("platform_admins").select("email").limit(1);
-      if (!cancelled) setPlatformAdmin(Boolean(pa && pa.length));
-      const { data, error: err } = await supabase
-        .from("sites")
-        .select("id, slug, name, plan, active, build_hook, draft")
-        .order("name");
-      if (cancelled) return;
-      if (err) {
-        setError(err.message);
-        setPhase("pending");
-        return;
-      }
-      const rows = (data || []) as SiteRow[];
-      setSites(rows);
-      if (rows.length === 0) {
-        setPhase("pending");
-        return;
-      }
-      const preferred = rows.find((r) => r.id === SITE_ID) || rows[0];
-      setSiteId((cur) => cur && rows.some((r) => r.id === cur) ? cur : preferred.id);
-      setPhase("ready");
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [supabase, session]);
+    setPhase("loading");
+    loadSites();
+  }, [supabase, session, loadSites]);
 
   // ---- Load the chosen site's draft, published version and bookings ----
   useEffect(() => {
@@ -321,7 +322,7 @@ export function useAdmin(forceDemo = false) {
     draft, update, dirty, saving, publish, openPreview,
     bookings, setBookingStatus, refreshBookings,
     upload, signIn, signOut, requestAccess,
-    canEdit, locked, plan, isPro, platformAdmin,
+    canEdit, locked, plan, isPro, platformAdmin, loadSites, flash,
     error, setError, toast,
   };
 }

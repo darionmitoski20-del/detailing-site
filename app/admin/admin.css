@@ -244,3 +244,9 @@
 @media (max-width: 820px) { .adm-mapprev { aspect-ratio: 4 / 3; } }
 .adm-toggle-row.is-locked .adm-toggle { opacity: 0.4; cursor: not-allowed; }
 .adm-pro { display: inline-block; margin-left: 6px; font-size: 11px; font-weight: 800; letter-spacing: 0.04em; color: #fff; background: var(--a-ink); border-radius: 6px; padding: 2px 7px; vertical-align: 2px; }
+.adm-banner--ok { margin: 14px 0 0; background: #f0fdf4; border: 1px solid #bbf7d0; color: #14532d; max-width: none; }
+.adm-code { font-family: ui-monospace, Menlo, monospace; font-size: 12px; background: var(--a-bg); padding: 2px 6px; border-radius: 6px; word-break: break-all; user-select: all; }
+.adm-client { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.adm-client-card { border: 1px solid var(--a-line); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+.adm-client-card.is-paused { background: #fff7f7; border-color: #f9c2c8; }
+.adm-client-card .adm-chips { margin: 0; }
