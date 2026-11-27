@@ -155,7 +155,7 @@ export function useAdmin(forceDemo = false) {
     (async () => {
       const { data: pub } = await supabase.from("published_sites").select("data").eq("site_id", siteId).maybeSingle();
       const published = pub?.data ? withDefaults(pub.data as Partial<SiteConfig>) : null;
-      const base = row.draft ? withDefaults(row.draft) : published || withDefaults({ ...demoSite, business: { ...demoSite.business, name: row.name } });
+      const base = row.draft ? withDefaults(row.draft) : published || withDefaults({ ...demoSite, business: { ...demoSite.business, name: row.name }, reviews: [], rating: { score: 5, count: 0 } });
       setDraft(prepareDraft(base));
       setPublishedJson(published ? JSON.stringify(published) : "");
       await refreshBookings(siteId);

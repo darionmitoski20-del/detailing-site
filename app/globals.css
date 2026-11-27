@@ -375,3 +375,5 @@ button, input, select, textarea { font: inherit; }
 .review__name:hover { text-decoration: underline; }
 .google-note { display: inline-flex; align-items: center; gap: 8px; margin-top: 24px; font-size: 13px; color: var(--muted); }
 .google-note svg { flex: none; }
+
+.reviews-more { margin-top: 28px; }
