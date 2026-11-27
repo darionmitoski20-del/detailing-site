@@ -21,7 +21,7 @@ export type BookingRow = {
   details: string | null;
   status: BookingStatus;
 };
-export type SiteRow = { id: string; slug: string; name: string; plan: "basic" | "admin"; active: boolean; build_hook: string | null; draft: Partial<SiteConfig> | null };
+export type SiteRow = { id: string; slug: string; name: string; plan: "basic" | "admin" | "pro"; active: boolean; build_hook: string | null; draft: Partial<SiteConfig> | null };
 
 export type Phase = "loading" | "signedOut" | "pending" | "ready";
 
@@ -80,9 +80,10 @@ export function useAdmin() {
   const loadedSite = useRef<string | null>(null);
 
   const site = sites.find((s) => s.id === siteId) || null;
-  const canEdit = demo || Boolean(site && site.plan === "admin" && site.active);
+  const canEdit = demo || Boolean(site && site.plan !== "basic" && site.active);
   const locked = Boolean(site && !site.active);
-  const plan = demo ? "admin" : site?.plan ?? "basic";
+  const plan: SiteRow["plan"] = demo ? "admin" : site?.plan ?? "basic";
+  const isPro = plan === "pro";
 
   const flash = useCallback((msg: string) => {
     setToast(msg);
@@ -172,7 +173,11 @@ export function useAdmin() {
   );
 
   // ---- Editing ----
-  const finalDraft = useMemo(() => finalizeDraft(draft), [draft]);
+  const finalDraft = useMemo(() => {
+    const f = finalizeDraft(draft);
+    // Google reviews are a Pro plan feature.
+    return isPro ? f : { ...f, googleReviews: false };
+  }, [draft, isPro]);
   const dirty = JSON.stringify(finalDraft) !== publishedJson;
 
   const update = useCallback(
@@ -311,7 +316,7 @@ export function useAdmin() {
     draft, update, dirty, saving, publish, openPreview,
     bookings, setBookingStatus, refreshBookings,
     upload, signIn, signOut, requestAccess,
-    canEdit, locked, plan,
+    canEdit, locked, plan, isPro,
     error, setError, toast,
   };
 }

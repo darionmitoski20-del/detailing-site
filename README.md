@@ -71,7 +71,7 @@ lib/                  ← бои и линкови
    insert into sites (slug, name, plan) values ('shine-pro', 'Shine Pro Detailing', 'admin') returning id;
    insert into site_members (site_id, email, role) values ('<id-od-gore>', 'klient@email.com', 'owner');
    ```
-   (`plan = 'basic'` = клиентот гледа само барања за резервација.)
+   (`plan`: `basic` = само барања за резервација, `admin` = целиот админ, `pro` = админ + Google рецензии.)
 2. Netlify → *Add new site → Import from GitHub* → овој repo. Build command `npm run build`, publish directory `out`.
 3. Netlify → *Site configuration → Environment variables*:
    - `NEXT_PUBLIC_SUPABASE_URL` = Project URL
@@ -99,7 +99,7 @@ lib/                  ← бои и линкови
 1. console.cloud.google.com → нов проект → вклучи **Places API (New)** → поврзи billing (има бесплатна месечна квота; еден сајт што се обновува еднаш дневно троши ~30 барања месечно).
 2. *Credentials → Create API key* → ограничи го само на *Places API (New)*.
 3. Netlify → Environment variables → `GOOGLE_PLACES_API_KEY` = клучот (без NEXT_PUBLIC_ — останува таен, не оди на сајтот).
-4. Во админот вклучи *Show my Google reviews* и притисни Publish.
+4. Само за клиенти на Pro план (`plan = 'pro'` во табелата sites): во админот вклучи *Show my Google reviews* и притисни Publish.
 5. За секојдневно освежување: Supabase → Database → Extensions → вклучи `pg_cron` и `pg_net`, па пушти го делот „daily-rebuild“ од крајот на `supabase/schema.sql`.
 
 Google враќа најмногу 5 рецензии; сајтот ги покажува тие со 4–5 ѕвезди.
