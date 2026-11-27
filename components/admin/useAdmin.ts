@@ -176,7 +176,7 @@ export function useAdmin() {
   const finalDraft = useMemo(() => {
     const f = finalizeDraft(draft);
     // Google reviews are a Pro plan feature.
-    return isPro ? f : { ...f, googleReviews: false };
+    return !isPro && f.googleReviews ? { ...f, googleReviews: false } : f;
   }, [draft, isPro]);
   const dirty = JSON.stringify(finalDraft) !== publishedJson;
 
