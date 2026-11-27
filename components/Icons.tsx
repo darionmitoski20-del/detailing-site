@@ -85,11 +85,11 @@ export const ArrowsIcon = (p: P) => (
   </Base>
 );
 
-export function Stars({ size = 18, label = "5 out of 5 stars" }: { size?: number; label?: string }) {
+export function Stars({ size = 18, label = "5 out of 5 stars", value = 5 }: { size?: number; label?: string; value?: number }) {
   return (
     <span className="stars" role="img" aria-label={label}>
       {[0, 1, 2, 3, 4].map((i) => (
-        <svg key={i} aria-hidden="true" width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+        <svg key={i} aria-hidden="true" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" style={i + 0.5 > value ? { opacity: 0.25 } : undefined}>
           <path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z" />
         </svg>
       ))}

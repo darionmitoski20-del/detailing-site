@@ -90,3 +90,16 @@ lib/                  ← бои и линкови
 
 ### Барања за пристап
 Новите детејлери кликаат *Request access* на /admin. Ги гледаш во **Table Editor → access_requests**, па ги додаваш со чекорите „Нов клиент“.
+
+## Google Maps и Google рецензии
+
+**Мапа** — работи без никаков клуч. Во админот → *Business info → Google Maps & reviews* детејлерот залепува линк од Google Maps (Share → Copy link). Сајтот добива дел „Map & location“ со мапа и копче *Get directions*. Делот може да се исклучи/помести во *Sections*.
+
+**Рецензии од Google** (вистинска оцена, број на рецензии, текст и слика од тој што оставил рецензија):
+1. console.cloud.google.com → нов проект → вклучи **Places API (New)** → поврзи billing (има бесплатна месечна квота; еден сајт што се обновува еднаш дневно троши ~30 барања месечно).
+2. *Credentials → Create API key* → ограничи го само на *Places API (New)*.
+3. Netlify → Environment variables → `GOOGLE_PLACES_API_KEY` = клучот (без NEXT_PUBLIC_ — останува таен, не оди на сајтот).
+4. Во админот вклучи *Show my Google reviews* и притисни Publish.
+5. За секојдневно освежување: Supabase → Database → Extensions → вклучи `pg_cron` и `pg_net`, па пушти го делот „daily-rebuild“ од крајот на `supabase/schema.sql`.
+
+Google враќа најмногу 5 рецензии; сајтот ги покажува тие со 4–5 ѕвезди.

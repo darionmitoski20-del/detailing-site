@@ -51,8 +51,8 @@ export default function Hero({ site }: { site: SiteConfig }) {
 
         <div className="hero__trust">
           <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-            <Stars label={`Rated ${site.rating.score} out of 5`} />
-            <strong>{site.rating.score}</strong> on Google · {site.rating.count}+ reviews
+            <Stars value={site.rating.score} label={`Rated ${site.rating.score} out of 5`} />
+            <strong>{site.rating.score}</strong> on Google · {site.rating.count}{site.rating.fromGoogle ? "" : "+"} reviews
           </span>
           <span className="divider" aria-hidden="true" />
           <span>Licensed &amp; insured</span>
