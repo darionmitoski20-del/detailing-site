@@ -28,8 +28,8 @@ function Ico({ d }: { d: string }) {
   );
 }
 
-export default function AdminApp() {
-  const a = useAdmin();
+export default function AdminApp({ demo = false }: { demo?: boolean }) {
+  const a = useAdmin(demo);
 
   if (a.phase === "loading") return <div className="adm-center"><div className="adm-spinner" aria-label="Loading" /></div>;
   if (a.phase === "signedOut") return <Login a={a} />;
@@ -100,6 +100,7 @@ function Login({ a }: { a: Admin }) {
               {state === "sending" ? "Sending…" : "Send me a login link"}
             </button>
             <p className="adm-muted adm-center-text">New here? <button type="button" className="adm-link" onClick={() => setMode("request")}>Request access</button></p>
+            <a className="adm-btn adm-btn--ghost adm-btn--full" href="?demo">Just looking? Try the demo admin</a>
           </form>
         ) : (
           <form onSubmit={sendRequest}>
@@ -179,7 +180,7 @@ function Shell({ a }: { a: Admin }) {
           )}
         </header>
 
-        {a.demo && <div className="adm-banner">This is a demo. Try anything — changes are not saved.</div>}
+        {a.demo && <div className="adm-banner">This is a demo. Try anything — changes are not saved. <a className="adm-link" href="./">Exit demo</a></div>}
         {a.locked && (
           <div className="adm-banner adm-banner--danger">
             Your admin is paused because the payment is overdue. Your website is still online. Please contact us to renew and unlock editing.

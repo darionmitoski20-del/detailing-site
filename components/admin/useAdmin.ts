@@ -62,9 +62,9 @@ const SAMPLE_BOOKINGS: BookingRow[] = [
   { id: "d3", created_at: new Date(Date.now() - 50 * 3600e3).toISOString(), name: "Carlos M.", phone: "(551) 555-0107", email: null, vehicle: "Truck / Van", service: "Exterior Detail", estimate: 249, preferred_date: "Tuesday 10 AM", details: "Work truck, very muddy", status: "confirmed" },
 ];
 
-export function useAdmin() {
-  const supabase = getSupabase();
-  const demo = !hasBackend;
+export function useAdmin(forceDemo = false) {
+  const demo = forceDemo || !hasBackend;
+  const supabase = demo ? null : getSupabase();
 
   const [phase, setPhase] = useState<Phase>(demo ? "ready" : "loading");
   const [session, setSession] = useState<Session | null>(null);

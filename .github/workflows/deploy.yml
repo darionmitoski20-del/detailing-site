@@ -32,6 +32,9 @@ jobs:
         env:
           # Site lives at https://<user>.github.io/<repo>/ — set to "" when using a custom domain.
           NEXT_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
+          # Public values (safe in the browser). The secret key is never used here.
+          NEXT_PUBLIC_SUPABASE_URL: https://ylupvidjoqwrdwupoyag.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: sb_publishable_FqggXtaYn-37PFv7oM_JCQ_p97Go85d
 
       - name: Disable Jekyll
         run: touch out/.nojekyll
