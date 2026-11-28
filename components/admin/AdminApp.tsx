@@ -35,8 +35,11 @@ function Ico({ d }: { d: string }) {
   );
 }
 
-export default function AdminApp({ demo = false }: { demo?: boolean }) {
+export default function AdminApp({ demo = false, demoSetup = false }: { demo?: boolean; demoSetup?: boolean }) {
   const a = useAdmin(demo);
+  const [setupDone, setSetupDone] = useState(false);
+  // /admin/?demo=setup — try the signup wizard without an account (nothing is saved).
+  if (demoSetup && !setupDone) return <SetupWizard a={a} onDone={() => setSetupDone(true)} />;
 
   if (a.phase === "loading") return <div className="adm-center"><div className="adm-spinner" aria-label="Loading" /></div>;
   if (a.phase === "signedOut") return <Login a={a} />;
