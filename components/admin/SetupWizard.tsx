@@ -376,6 +376,10 @@ export default function SetupWizard({ a, onDone }: { a: Admin; onDone?: () => vo
 
         {step === LAST && (
           <div>
+            <div className="adm-wiz__made">
+              {logo ? <img src={asset(logo)} alt="" /> : <span style={{ background: color }}>{(name.charAt(0) || "D").toUpperCase()}</span>}
+              <b>{name}</b>
+            </div>
             <h1>Your website is ready 🎉</h1>
             <p className="adm-muted">Your free 14-day trial has started. We will email you the link to your live website within 24 hours.</p>
             <ul className="adm-wiz__next">
