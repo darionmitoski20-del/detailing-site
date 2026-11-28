@@ -211,3 +211,43 @@ create policy media_delete on storage.objects for delete to authenticated
 --   '0 9 * * *',  -- every day 09:00 UTC (4–5 AM New York)
 --   $$ select net.http_post(url := build_hook) from public.sites where active and build_hook is not null $$
 -- );
+
+-- ============================================================
+--  SELF-SIGNUP (SaaS): a logged-in detailer creates their own site.
+--  One site per email. Starts on the "admin" plan with a 14-day trial.
+-- ============================================================
+alter table public.sites add column if not exists trial_ends_at timestamptz;
+alter table public.sites add column if not exists created_by text;
+
+create or replace function public.create_my_site(p_name text) returns uuid
+language plpgsql security definer set search_path = public as $$
+declare
+  me text := public.current_email();
+  base text;
+  s text;
+  new_id uuid;
+begin
+  if me = '' then raise exception 'Not logged in'; end if;
+  if length(trim(coalesce(p_name, ''))) < 2 then raise exception 'Business name is too short'; end if;
+  if exists (select 1 from public.site_members m where lower(m.email) = me) and not public.is_platform_admin() then
+    raise exception 'You already have a website';
+  end if;
+  base := trim(both '-' from regexp_replace(lower(p_name), '[^a-z0-9]+', '-', 'g'));
+  if base = '' then base := 'site'; end if;
+  base := left(base, 40);
+  s := base;
+  while exists (select 1 from public.sites where slug = s) loop
+    s := base || '-' || substr(md5(random()::text), 1, 4);
+  end loop;
+  insert into public.sites (slug, name, plan, active, trial_ends_at, created_by)
+    values (s, trim(p_name), 'admin', true, now() + interval '14 days', me)
+    returning id into new_id;
+  insert into public.site_members (site_id, email, role) values (new_id, me, 'owner');
+  return new_id;
+end $$;
+
+revoke all on function public.create_my_site(text) from public, anon;
+grant execute on function public.create_my_site(text) to authenticated;
+
+-- Answers from the setup wizard that are for you, not for the website (domain wishes, etc.).
+alter table public.sites add column if not exists onboarding jsonb;

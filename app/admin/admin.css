@@ -289,3 +289,25 @@
 }
 .adm-review-edit { padding-bottom: 14px; border-bottom: 1px solid var(--a-line); }
 .adm-review-edit .adm-field { margin-bottom: 8px; }
+/* Setup wizard */
+.adm-wiz { min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; padding: 40px 16px; background: var(--a-side); }
+.adm-wiz__card { width: 100%; max-width: 620px; background: #fff; border-radius: 18px; padding: 28px; }
+.adm-wiz__card .adm-brand { color: var(--a-ink); margin-bottom: 20px; }
+.adm-wiz__progress { height: 6px; border-radius: 99px; background: var(--a-line); overflow: hidden; margin-bottom: 8px; }
+.adm-wiz__progress span { display: block; height: 100%; background: var(--a-red); transition: width 0.25s; }
+.adm-wiz h1 { margin-top: 8px; }
+.adm-wiz__services { display: flex; flex-direction: column; gap: 8px; }
+.adm-wiz__svc { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border: 1px solid var(--a-line); border-radius: 12px; cursor: pointer; }
+.adm-wiz__svc.is-on { border-color: var(--a-ink); }
+.adm-root .adm-wiz__svc input[type="checkbox"] { width: 20px; height: 20px; min-height: 0; accent-color: var(--a-red); flex: none; }
+.adm-wiz__svcname { flex: 1; font-weight: 600; }
+.adm-wiz__svc .adm-money { width: 110px; flex: none; }
+.adm-wiz__nav { display: flex; justify-content: space-between; gap: 10px; margin-top: 22px; }
+.adm-wiz__next { margin: 0 0 8px; padding-left: 20px; line-height: 1.8; }
+@media (max-width: 520px) {
+  .adm-wiz { padding: 0; }
+  .adm-wiz__card { border-radius: 0; min-height: 100vh; padding: 22px 16px; }
+  .adm-wiz .adm-seg { flex-direction: column; }
+}
+.adm-info { background: var(--a-bg); border-radius: 10px; padding: 10px 12px; font-size: 14px; display: flex; flex-direction: column; gap: 4px; }
+.adm-status--trial { background: #e0f2fe; color: #0369a1; }
