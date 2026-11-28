@@ -33,7 +33,7 @@ function digits(s: string) {
 }
 
 /** First visit of a new detailer: builds their website in 4 short steps. */
-export default function SetupWizard({ a }: { a: Admin }) {
+export default function SetupWizard({ a, onDone }: { a: Admin; onDone?: () => void }) {
   const [step, setStep] = useState(0);
   const [busy, setBusy] = useState(false);
   const [siteId, setSiteId] = useState<string | null>(a.site?.id ?? null);
@@ -385,7 +385,7 @@ export default function SetupWizard({ a }: { a: Admin }) {
             </ul>
             <div className="adm-wiz__nav">
               <button type="button" className="adm-btn adm-btn--ghost" onClick={a.openPreview}>See my website</button>
-              <button type="button" className="adm-btn adm-btn--primary" onClick={() => a.loadSites()}>Go to my admin</button>
+              <button type="button" className="adm-btn adm-btn--primary" onClick={() => (onDone ? onDone() : a.loadSites())}>Go to my admin</button>
             </div>
           </div>
         )}

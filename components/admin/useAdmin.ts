@@ -221,6 +221,7 @@ export function useAdmin(forceDemo = false) {
   /** Self-signup: creates this person's own website (one per email). */
   const createMySite = useCallback(
     async (name: string): Promise<string | null> => {
+      if (demo) return "demo";
       if (!supabase) return null;
       const { data, error: err } = await supabase.rpc("create_my_site", { p_name: name });
       if (err) {
@@ -236,6 +237,11 @@ export function useAdmin(forceDemo = false) {
   const finishOnboarding = useCallback(
     async (id: string, cfg: SiteConfig, onboarding: Onboarding) => {
       const data = finalizeDraft(prepareDraft(cfg));
+      if (demo) {
+        setDraft(prepareDraft(data));
+        setBookings([]);
+        return true;
+      }
       if (!supabase) return false;
       const a1 = await supabase.from("sites").update({ draft: data, onboarding: { ...onboarding, finishedAt: new Date().toISOString() } }).eq("id", id);
       const a2 = await supabase.from("published_sites").upsert({ site_id: id, data, published_at: new Date().toISOString() });
