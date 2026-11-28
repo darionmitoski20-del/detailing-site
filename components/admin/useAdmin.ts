@@ -21,9 +21,20 @@ export type BookingRow = {
   details: string | null;
   status: BookingStatus;
 };
-export type SiteRow = { id: string; slug: string; name: string; plan: "basic" | "admin" | "pro"; active: boolean; build_hook: string | null; draft: Partial<SiteConfig> | null };
+export type SiteRow = { id: string; slug: string; name: string; plan: "basic" | "admin" | "pro"; active: boolean; build_hook: string | null; draft: Partial<SiteConfig> | null; trial_ends_at?: string | null; created_at?: string; onboarding?: Onboarding | null };
 
-export type Phase = "loading" | "signedOut" | "pending" | "ready";
+/** Wizard answers meant for you (not shown on the website). */
+export type Onboarding = {
+  hasDomain: boolean;
+  domain?: string; // the domain they already own
+  registrar?: string; // where they bought it
+  domainIdeas?: string[]; // names they would like
+  bookingSystem?: string;
+  notes?: string;
+  finishedAt?: string;
+};
+
+export type Phase = "loading" | "signedOut" | "pending" | "onboarding" | "ready";
 
 export const PHOTO_LIMIT = 50;
 export const VIDEO_MAX_SECONDS = 30;
@@ -120,7 +131,7 @@ export function useAdmin(forceDemo = false) {
     setPlatformAdmin(isPA);
     const { data, error: err } = await supabase
       .from("sites")
-      .select("id, slug, name, plan, active, build_hook, draft")
+      .select("id, slug, name, plan, active, build_hook, draft, trial_ends_at, created_at, onboarding")
       .order("name");
     if (err) {
       setError(err.message);
@@ -132,7 +143,8 @@ export function useAdmin(forceDemo = false) {
     if (rows.length === 0) {
       setSiteId(null);
       // You (platform admin) still get in, to add your first client.
-      setPhase(isPA ? "ready" : "pending");
+      // New detailer without a website: start the setup wizard.
+      setPhase(isPA ? "ready" : "onboarding");
       return;
     }
     const preferred = rows.find((r) => r.id === SITE_ID) || rows[0];
@@ -204,6 +216,36 @@ export function useAdmin(forceDemo = false) {
       });
     },
     [canEdit, supabase, siteId],
+  );
+
+  /** Self-signup: creates this person's own website (one per email). */
+  const createMySite = useCallback(
+    async (name: string): Promise<string | null> => {
+      if (!supabase) return null;
+      const { data, error: err } = await supabase.rpc("create_my_site", { p_name: name });
+      if (err) {
+        setError(err.message);
+        return null;
+      }
+      return data as string;
+    },
+    [supabase],
+  );
+
+  /** End of the setup wizard: save and publish the first version of the website. */
+  const finishOnboarding = useCallback(
+    async (id: string, cfg: SiteConfig, onboarding: Onboarding) => {
+      const data = finalizeDraft(prepareDraft(cfg));
+      if (!supabase) return false;
+      const a1 = await supabase.from("sites").update({ draft: data, onboarding: { ...onboarding, finishedAt: new Date().toISOString() } }).eq("id", id);
+      const a2 = await supabase.from("published_sites").upsert({ site_id: id, data, published_at: new Date().toISOString() });
+      if (a1.error || a2.error) {
+        setError((a1.error || a2.error)!.message);
+        return false;
+      }
+      return true;
+    },
+    [supabase],
   );
 
   const publish = useCallback(async () => {
@@ -331,7 +373,7 @@ export function useAdmin(forceDemo = false) {
     demo, phase, session, sites, site, siteId, setSiteId: (id: string) => { loadedSite.current = null; setSiteId(id); },
     draft, update, dirty, saving, publish, openPreview,
     bookings, setBookingStatus, refreshBookings,
-    upload, signIn, signInWithPassword, signOut, requestAccess,
+    upload, createMySite, finishOnboarding, signIn, signInWithPassword, signOut, requestAccess,
     canEdit, locked, plan, isPro, platformAdmin, loadSites, flash,
     error, setError, toast,
   };

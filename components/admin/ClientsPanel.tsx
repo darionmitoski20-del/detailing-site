@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState, type FormEvent } from "react";
+import React, { useCallback, useEffect, useState, type FormEvent } from "react";
 import { getSupabase } from "@/lib/supabase";
 import type { Admin, SiteRow } from "./useAdmin";
 
@@ -160,6 +160,7 @@ export default function ClientsPanel({ a, onOpen }: { a: Admin; onOpen: (siteId:
                     </div>
                     <button className="adm-btn adm-btn--primary" onClick={() => onOpen(s.id)}>Open</button>
                   </div>
+                  <ClientInfo s={s} />
                   <div className="adm-grid2">
                     <label className="adm-field"><span>Plan</span>
                       <select value={s.plan} onChange={(e) => updateSite(s.id, { plan: e.target.value as SiteRow["plan"] })}>
@@ -189,6 +190,29 @@ export default function ClientsPanel({ a, onOpen }: { a: Admin; onOpen: (siteId:
           </div>
         )}
       </section>
+    </div>
+  );
+}
+
+export function trialDaysLeft(s: SiteRow): number | null {
+  if (!s.trial_ends_at) return null;
+  const d = Math.ceil((new Date(s.trial_ends_at).getTime() - Date.now()) / 864e5);
+  return d;
+}
+
+/** What the detailer answered in the setup wizard (domain wishes, booking system, notes). */
+function ClientInfo({ s }: { s: SiteRow }) {
+  const o = s.onboarding;
+  const t = trialDaysLeft(s);
+  if (!o && t == null) return null;
+  return (
+    <div className="adm-info">
+      {t != null && <div><b>Trial:</b> {t > 0 ? `${t} day${t === 1 ? "" : "s"} left` : "ended"}{s.created_at ? ` · signed up ${new Date(s.created_at).toLocaleDateString()}` : ""}</div>}
+      {o && (o.hasDomain
+        ? <div><b>Domain:</b> has <code className="adm-code">{o.domain}</code>{o.registrar ? ` (bought at ${o.registrar})` : ""} — connect it</div>
+        : <div><b>Domain:</b> wants {o.domainIdeas?.length ? o.domainIdeas.map((d) => <code key={d} className="adm-code">{d}</code>).reduce<React.ReactNode[]>((acc, el, i) => (i ? [...acc, " or ", el] : [el]), []) : "a new domain"} — check and buy</div>)}
+      {o?.bookingSystem && <div><b>Booking:</b> uses {o.bookingSystem}</div>}
+      {o?.notes && <div><b>Notes:</b> {o.notes}</div>}
     </div>
   );
 }

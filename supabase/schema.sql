@@ -248,3 +248,6 @@ end $$;
 
 revoke all on function public.create_my_site(text) from public, anon;
 grant execute on function public.create_my_site(text) to authenticated;
+
+-- Answers from the setup wizard that are for you, not for the website (domain wishes, etc.).
+alter table public.sites add column if not exists onboarding jsonb;

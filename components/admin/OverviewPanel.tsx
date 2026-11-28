@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { getSupabase } from "@/lib/supabase";
 import { offer } from "@/offer.config";
 import type { Admin, BookingStatus, SiteRow } from "./useAdmin";
+import { trialDaysLeft } from "./ClientsPanel";
 
 type B = { id: string; site_id: string; created_at: string; status: BookingStatus; estimate: number | null; name: string; service: string | null };
 type Pub = { site_id: string; published_at: string };
@@ -52,7 +53,9 @@ export default function OverviewPanel({ a, onOpen, onClients }: { a: Admin; onOp
   }, [load]);
 
   const stats = useMemo(() => {
-    const active = a.sites.filter((s) => s.active);
+    const onTrial = (s: SiteRow) => (trialDaysLeft(s) ?? 0) > 0;
+    const active = a.sites.filter((s) => s.active && !onTrial(s));
+    const trials = a.sites.filter((s) => s.active && onTrial(s));
     const paused = a.sites.filter((s) => !s.active);
     let income = 0;
     let unpriced = 0;
@@ -68,6 +71,7 @@ export default function OverviewPanel({ a, onOpen, onClients }: { a: Admin; onOp
     });
     return {
       active: active.length,
+      trials: trials.length,
       paused: paused.length,
       income,
       unpriced,
@@ -85,6 +89,9 @@ export default function OverviewPanel({ a, onOpen, onClients }: { a: Admin; onOp
     const todo: string[] = [];
     if (!pub) todo.push("Not published yet");
     if (!s.build_hook) todo.push("No Netlify build hook");
+    const o = s.onboarding;
+    if (o && !s.build_hook) todo.unshift(o.hasDomain ? `Connect ${o.domain}` : `Buy domain (${o.domainIdeas?.[0] || "ask"})`);
+    if (!o && !s.draft) todo.unshift("Wizard not finished");
     return {
       s,
       req30: mine.filter((b) => Date.now() - new Date(b.created_at).getTime() < 30 * DAY).length,
@@ -103,7 +110,7 @@ export default function OverviewPanel({ a, onOpen, onClients }: { a: Admin; onOp
         <div className="adm-kpi">
           <span>Monthly income</span>
           <b>{money(stats.income)}</b>
-          <small>{stats.active} paying client{stats.active === 1 ? "" : "s"}{stats.unpriced ? ` · ${stats.unpriced} Pro without a price` : ""}</small>
+          <small>{stats.active} paying client{stats.active === 1 ? "" : "s"}{stats.trials ? ` · ${stats.trials} on free trial` : ""}{stats.unpriced ? ` · ${stats.unpriced} Pro without a price` : ""}</small>
         </div>
         <div className="adm-kpi">
           <span>Clients</span>
@@ -158,7 +165,7 @@ export default function OverviewPanel({ a, onOpen, onClients }: { a: Admin; onOp
                   <tr key={s.id}>
                     <td data-label="Client"><b>{s.name}</b></td>
                     <td data-label="Plan">{PLAN_LABEL[s.plan]}{monthlyFor(s.plan) != null ? ` · ${money(monthlyFor(s.plan)!)}/mo` : ""}</td>
-                    <td data-label="Payment">{s.active ? <span className="adm-status adm-status--confirmed">Paid</span> : <span className="adm-status adm-status--new">Not paid</span>}</td>
+                    <td data-label="Payment">{!s.active ? <span className="adm-status adm-status--new">Not paid</span> : (trialDaysLeft(s) ?? 0) > 0 ? <span className="adm-status adm-status--trial">Trial · {trialDaysLeft(s)}d</span> : <span className="adm-status adm-status--confirmed">Paid</span>}</td>
                     <td data-label="Requests 30d">{req30}{waiting ? <span className="adm-muted"> · {waiting} new</span> : ""}</td>
                     <td data-label="Last request">{last ? ago(last) : <span className="adm-muted">none yet</span>}</td>
                     <td data-label="Setup">{todo.length ? <span className="adm-warn">{todo.join(", ")}</span> : <span className="adm-ok">✓ Live</span>}</td>

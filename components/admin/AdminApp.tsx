@@ -7,6 +7,7 @@ import { WEEK_DAYS } from "@/lib/hours";
 import { asset } from "@/lib/asset";
 import { mapEmbedSrc } from "@/lib/maps";
 import ClientsPanel from "./ClientsPanel";
+import SetupWizard from "./SetupWizard";
 import OverviewPanel from "./OverviewPanel";
 import ReviewsPanel from "./ReviewsPanel";
 import { PHOTO_LIMIT, useAdmin, type Admin, type BookingRow, type BookingStatus } from "./useAdmin";
@@ -40,13 +41,16 @@ export default function AdminApp({ demo = false }: { demo?: boolean }) {
   if (a.phase === "loading") return <div className="adm-center"><div className="adm-spinner" aria-label="Loading" /></div>;
   if (a.phase === "signedOut") return <Login a={a} />;
   if (a.phase === "pending") return <Pending a={a} />;
+  // New detailer (signed up alone, or a site you made but never filled in): setup wizard.
+  const needsSetup = !a.demo && !a.platformAdmin && (a.phase === "onboarding" || (a.site != null && !a.site.draft));
+  if (needsSetup) return <SetupWizard a={a} />;
   return <Shell a={a} />;
 }
 
 /* ============================== Login ============================== */
 
 function Login({ a }: { a: Admin }) {
-  const [mode, setMode] = useState<"login" | "request" | "password">("login");
+  const [mode, setMode] = useState<"login" | "signup" | "request" | "password">("login");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [business, setBusiness] = useState("");
@@ -103,19 +107,23 @@ function Login({ a }: { a: Admin }) {
             <p className="adm-muted">Thanks! We will set up your website and email you at <b>{email}</b> when your admin is ready.</p>
             <button className="adm-btn adm-btn--ghost" onClick={() => { setMode("login"); setState("idle"); }}>Back to login</button>
           </>
-        ) : mode === "login" ? (
+        ) : mode === "login" || mode === "signup" ? (
           <form onSubmit={sendLink}>
-            <h1>Log in</h1>
-            <p className="adm-muted">No password. We email you a link.</p>
+            <h1>{mode === "signup" ? "Start free" : "Log in"}</h1>
+            <p className="adm-muted">{mode === "signup" ? "Your website in 3 minutes. Free for 14 days, no card needed. Enter your email and we send you a link." : "No password. We email you a link."}</p>
             <label className="adm-field">
               <span>Email</span>
               <input type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@yourbusiness.com" />
             </label>
             {msg && <p className="adm-error">{msg}</p>}
             <button className="adm-btn adm-btn--primary adm-btn--full" disabled={state === "sending"}>
-              {state === "sending" ? "Sending…" : "Send me a login link"}
+              {state === "sending" ? "Sending…" : mode === "signup" ? "Create my free website" : "Send me a login link"}
             </button>
-            <p className="adm-muted adm-center-text">New here? <button type="button" className="adm-link" onClick={() => setMode("request")}>Request access</button></p>
+            {mode === "login" ? (
+              <p className="adm-muted adm-center-text">New here? <button type="button" className="adm-link" onClick={() => { setMode("signup"); setMsg(""); }}>Start your free website</button></p>
+            ) : (
+              <p className="adm-muted adm-center-text">Already have a website? <button type="button" className="adm-link" onClick={() => { setMode("login"); setMsg(""); }}>Log in</button></p>
+            )}
             <a className="adm-btn adm-btn--ghost adm-btn--full" href="?demo">Just looking? Try the demo admin</a>
             <p className="adm-muted adm-center-text adm-small"><button type="button" className="adm-link" onClick={() => { setMode("password"); setMsg(""); }}>Log in with password</button></p>
           </form>
