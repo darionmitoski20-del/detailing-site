@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import "./admin.css";
 
 export const metadata: Metadata = {
-  title: "Admin",
+  title: "Admin · AutoDetailWeb",
   robots: { index: false, follow: false },
 };
 
