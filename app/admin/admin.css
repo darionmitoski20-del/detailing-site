@@ -311,3 +311,7 @@
 }
 .adm-info { background: var(--a-bg); border-radius: 10px; padding: 10px 12px; font-size: 14px; display: flex; flex-direction: column; gap: 4px; }
 .adm-status--trial { background: #e0f2fe; color: #0369a1; }
+.adm-brand__logo { width: 34px; height: 34px; border-radius: 9px; object-fit: contain; background: #fff; flex: none; }
+.adm-wiz__made { display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid var(--a-line); border-radius: 12px; margin-bottom: 14px; }
+.adm-wiz__made img, .adm-wiz__made span { width: 48px; height: 48px; border-radius: 10px; object-fit: contain; flex: none; }
+.adm-wiz__made span { display: grid; place-items: center; color: #fff; font-family: var(--font-display), sans-serif; font-size: 24px; }

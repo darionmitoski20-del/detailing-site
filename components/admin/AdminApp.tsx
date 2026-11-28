@@ -186,7 +186,14 @@ function Shell({ a }: { a: Admin }) {
   return (
     <div className="adm">
       <aside className="adm-side">
-        <div className="adm-brand"><span className="adm-brand__mark">{(name.charAt(0) || "D").toUpperCase()}</span> {name}</div>
+        <div className="adm-brand">
+          {!a.platformAdmin && a.draft.business.logo ? (
+            <img className="adm-brand__logo" src={asset(a.draft.business.logo)} alt="" />
+          ) : (
+            <span className="adm-brand__mark" style={!a.platformAdmin ? { background: a.draft.theme.accent } : undefined}>{(name.charAt(0) || "D").toUpperCase()}</span>
+          )}{" "}
+          {name}
+        </div>
         <nav>
           {mainTabs.length > 0 && <div className="adm-nav-label">Your business</div>}
           {mainTabs.map((t) => (
