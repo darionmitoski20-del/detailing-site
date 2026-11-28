@@ -89,7 +89,7 @@ function Login({ a }: { a: Admin }) {
   return (
     <div className="adm-login">
       <div className="adm-login__card">
-        <div className="adm-brand"><span className="adm-brand__mark">D</span> Detailer Admin</div>
+        <div className="adm-brand"><span className="adm-brand__mark">A</span> AutoDetailWeb</div>
 
         {state === "sent" ? (
           <>
@@ -149,7 +149,7 @@ function Pending({ a }: { a: Admin }) {
   return (
     <div className="adm-login">
       <div className="adm-login__card">
-        <div className="adm-brand"><span className="adm-brand__mark">D</span> Detailer Admin</div>
+        <div className="adm-brand"><span className="adm-brand__mark">A</span> AutoDetailWeb</div>
         <h1>Waiting for approval</h1>
         <p className="adm-muted">You are logged in as <b>{a.session?.user.email}</b>, but this email is not connected to a website yet. We will email you as soon as it is ready.</p>
         {a.error && <p className="adm-error">{a.error}</p>}
@@ -170,7 +170,7 @@ function Shell({ a }: { a: Admin }) {
   const [tab, setTab] = useState<Tab>(a.platformAdmin ? "overview" : "requests");
   const isMainTab = tab === "overview" || tab === "clients";
   const newCount = a.bookings.filter((b) => b.status === "new").length;
-  const name = a.platformAdmin ? "Main admin" : a.draft.business.name;
+  const name = a.platformAdmin ? "AutoDetailWeb" : a.draft.business.name;
 
   return (
     <div className="adm">

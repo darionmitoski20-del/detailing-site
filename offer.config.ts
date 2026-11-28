@@ -23,8 +23,8 @@ export const offer = {
   /** Shows a "This is a demo — get this website" bar on top of the demo page. */
   showDemoBanner: true,
 
-  brand: "Detailing Websites",
-  initial: "D",
+  brand: "AutoDetailWeb",
+  initial: "A",
 
   contact: {
     phoneDisplay: "(862) 386-8493",
